@@ -100,7 +100,7 @@ global.log = (type, msg) => {
 		case MISC: name = "MISC"; break;
 		default  : name = "UNKN";
 	}
-	console.log(`\u001b[${type}m[${name}]\u001b[0m ${msg}`);
+	console.log(`${Date.now()} \u001b[${type}m[${name}]\u001b[0m ${msg}`);
 	if (type === FATL) process.exit(1);
 };
 
@@ -160,25 +160,6 @@ let conf;
 			}
 		// Check conf.NAME is valid
 			if (conf.NAME === undefined) conf.NAME = DEFAULTCONF.NAME;
-		// Check conf.FILESDIR is valid
-			if (conf.FILESDIR === undefined) {
-				log(WARN, `Define "FILESDIR" in "${CONFIGDIR}"`);
-				conf.FILESDIR = DEFAULTCONF.FILESDIR;
-			}
-			if (conf.FILESDIR[conf.FILESDIR.length - 1] !== "/") { // conf.FILESDIR must have "/" at the end
-				conf.FILESDIR += "/";
-			}
-			if (fs.existsSync(conf.FILESDIR)) {
-				if (fs.statSync(conf.FILESDIR).isFile()) {
-					log(FATL, `File directory "${conf.FILESDIR}" is a file`);
-					// TODO rename file and put it in all
-				}
-				checkfilesdirstructure();
-			} else {
-				fs.mkdirSync(conf.FILESDIR);
-				fs.mkdirSync(`${conf.FILESDIR}all`);
-				log(INFO, `Creating "${conf.FILESDIR}" as it didn't exist`);
-			}
 		// Check conf.SCRIPTSis valid
 			if (conf.SCRIPTS === undefined) {
 				conf.SCRIPTS = DEFAULTCONF.SCRIPTS;
@@ -329,7 +310,27 @@ let conf;
 			}
 		});
 	}
-	
+
+// Check conf.FILESDIR is valid
+	if (conf.FILESDIR === undefined) {
+		log(WARN, `Define "FILESDIR" in "${CONFIGDIR}"`);
+		conf.FILESDIR = DEFAULTCONF.FILESDIR;
+	}
+	if (conf.FILESDIR[conf.FILESDIR.length - 1] !== "/") { // conf.FILESDIR must have "/" at the end
+		conf.FILESDIR += "/";
+	}
+	if (fs.existsSync(conf.FILESDIR)) {
+		if (fs.statSync(conf.FILESDIR).isFile()) {
+			log(FATL, `File directory "${conf.FILESDIR}" is a file`);
+			// TODO rename file and put it in all
+		}
+		checkfilesdirstructure();
+	} else {
+		fs.mkdirSync(conf.FILESDIR);
+		fs.mkdirSync(`${conf.FILESDIR}all`);
+		log(INFO, `Creating "${conf.FILESDIR}" as it didn't exist`);
+	}
+
 // Watch for changes in conf.FILESDIR
 fileventignore = 0;
 fs.watch(conf.FILESDIR, { persistent: false	}, (event, file) => {
@@ -378,13 +379,13 @@ function listdir(dir) {
 </form> <br>` + ( // 
 		files.map((i) => {
 			if (fs.statSync(`${dir}/${i}`).isDirectory()) {
-				return `ðŸ“&nbsp<a href="${fdir}/${i}">${i} (dir)</a>`;
+				return `📁&nbsp<a href="${fdir}/${i}">${i} (dir)</a>`;
 			} else if (conf.SCRIPTS.indexOf(i)   !== -1) {
-				return `ðŸ“œ&nbsp<a href="${fdir}/${i}">${i} (script)</a>`;
+				return `📜&nbsp<a href="${fdir}/${i}">${i} (script)</a>`;
 			} else if (conf.REDIRECTS.indexOf(i) !== -1) {
-				return `ðŸ”—&nbsp<a href="${fdir}/${i}">${i} (redirect)</a>`;
+				return `🔗&nbsp<a href="${fdir}/${i}">${i} (redirect)</a>`;
 			} else {
-				return `ðŸ“‘&nbsp<a href="${fdir}/${i}">${i}</a>`;
+				return `📑&nbsp<a href="${fdir}/${i}">${i}</a>`;
 			}
 		}).join("<br>")
 	); 
@@ -479,7 +480,7 @@ function HTTPhandle(req, res) {
 	</form> <button onclick="document.cookie='u=; SameSite=strict';document.cookie='p=; SameSite=strict';document.location.reload();">Logout</button>
 	<h3>Files:</h3>
 	${files}
-	<a href="/source.js" target="_blank" rel="noopener noreferrer" style="position:fixed;right:5px;bottom:5px;font: 16px monospace;text-decoration: none;">ðŸ“‘</a>
+	<a href="/source.js" target="_blank" rel="noopener noreferrer" style="position:fixed;right:5px;bottom:5px;font: 16px monospace;text-decoration: none;">📑</a>
 	<a class="github-corner" href="https://github.com/SollyBunny/webserver" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: fixed; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 </body></html>`);
 			break;
