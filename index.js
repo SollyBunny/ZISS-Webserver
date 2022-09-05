@@ -100,8 +100,11 @@ global.log = (type, msg) => {
 		case MISC: name = "MISC"; break;
 		default  : name = "UNKN";
 	}
-	console.log(`${Date.now()} \u001b[${type}m[${name}]\u001b[0m ${msg}`);
-	if (type === FATL) process.exit(1);
+	console.log(`\u001b[${type}m[${name}]\u001b[0m ${msg}`);
+	if (type === FATL) {
+		process.kill(process.pid, 9); // a bit mean
+		process.exit(1);
+	}
 };
 
 if (__dirname !== process.cwd()) {
@@ -109,8 +112,8 @@ if (__dirname !== process.cwd()) {
 	process.chdir(__dirname);
 }
 
-global.fs  = require("fs" );
-global.url = require("url");
+global.fs      = require("fs"     );
+global.url     = require("url"    );
 url.parseCookie = (cookie) => {
 	if (!cookie) return {};
 	let tempcookie = cookie.split(";");
@@ -473,7 +476,7 @@ function HTTPhandle(req, res) {
 			res.end(`
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>${conf.NAME}</title></head><body><h1>${conf.NAME}</h1>
 	<h3>Login:</h3>
-	<form onsubmit='document.cookie="u="+document.getElementById("u").value+"; SameSite=strict; max-age=31536000";document.cookie="p="+document.getElementById("p").value+"; SameSite=strict; max-age=31536000";document.location="/";return false;'>
+	<form onsubmit='document.cookie="u="+document.getElementById("u").value+"; SameSite=strict; max-age=31536000";document.cookie="p="+document.getElementById("p").value+"; SameSite=strict; max-age=31536000";document.location.reload();return false;'>
 		Name <input id="u" required type="text"><br>
 		Pass <input id="p" required type="password"><br>
 		<input type="submit" value="Login">
@@ -509,6 +512,13 @@ function HTTPhandle(req, res) {
 					"Content-Type": "text/html"
 				});
 				res.end("Lacking permission<br><a href='/'>Back</a>");
+				return;
+			}
+			if (req.url.pathname.slice(0, 2) == ".." || req.url.pathname.indexOf("/..")) {
+				res.writeHead(400, {
+					"Content-Type": "text/html"
+				});
+				res.end("Stop exploiting<br><a href='/'>Back</a>");
 				return;
 			}
 			req.url.pathname = `${conf.FILESDIR}${decodeURI(req.url.pathname)}`; // normalize pathname into filepath
