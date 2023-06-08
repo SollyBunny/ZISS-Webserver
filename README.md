@@ -10,7 +10,7 @@ This guide is for [Arch Linux](https://archlinux.org/)
 	```
 1. Install websocket (optional)  
 	```sh
-	npm i websocket
+	npm i ws
 	```
 1. Download `webserver.js`  
 	```sh
