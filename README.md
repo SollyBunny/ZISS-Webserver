@@ -6,7 +6,7 @@ You can find the file [here](https://gist.github.com/SollyBunny/3107e20f5c4c4553
 This guide is for [Arch Linux](https://archlinux.org/)
 1. Install NodeJS & NPM  
 	```sh
-	sudo pacman -S node npm`
+	sudo pacman -S node npm
 	```
 1. Install websocket (optional)  
 	```sh
