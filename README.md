@@ -1,9 +1,13 @@
-# webserver
-A node.js http(s)/ws server which is all in one neat file :D
+# ZISS
+ZISS - **Z**ISS **i**s **s**o **s**illy  
+* Made with [NodeJS](https://nodejs.org/)
+* Single file
+* Very smowl (400 lines)
+* Somewhat fast (citation needed)
 ## Download
 You can find the file [here](https://gist.github.com/SollyBunny/3107e20f5c4c45532e37cc800aa984a1/)
 ## Usage
-This guide is for [Arch Linux](https://archlinux.org/)
+This guide is for [Arch Linux](https://archlinux.org/) but will be similar for other distros/OSs
 1. Install NodeJS & NPM  
 	```sh
 	sudo pacman -S node npm
