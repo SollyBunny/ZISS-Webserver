@@ -2,7 +2,7 @@
 ZISS - **Z**ISS **i**s **s**o **s**illy  
 * Made with [NodeJS](https://nodejs.org/)
 * Single file
-* Very smowl (400 lines)
+* Very smowl (600 lines)
 * Somewhat fast (citation needed)
 ## Download
 You can find the file [here](https://gist.github.com/SollyBunny/3107e20f5c4c45532e37cc800aa984a1/)
